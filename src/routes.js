@@ -10,13 +10,15 @@ export const routes = [
     path: buildRoutePath('/tasks'),
     handler: (req, res) => 
     {
-      const { search } = req.query
+      const { title, description } = req.query
 
-      const tasks = database.select('tasks', search ? {
-        title: search,
-        description: search,
-      } : null)
+      const search = {
+        title,
+        description
+      }
 
+      const tasks = database.select('tasks', (search.title || search.description) ? search : null)
+     
       return res.end(JSON.stringify(tasks))
     }
   },
@@ -25,7 +27,7 @@ export const routes = [
     path: buildRoutePath('/tasks'),
     handler: (req, res) => 
     {
-      if (req.body)
+      if (req.body.title && req.body.description)
       {
         const { title, description } = req.body
 
