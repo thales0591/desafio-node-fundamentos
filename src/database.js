@@ -22,19 +22,19 @@ export class Database {
   {
     fs.writeFile(databasePath, JSON.stringify(this.#database))
   }
-//select (table, search)
-  select (table)
+
+  select (table, search)
   {
     let data = this.#database[table] ?? []
 
-/*     if (search)
+    if (search)
     {
       data = data.filter((row) => {
         return Object.entries(search).some(([key, value]) => {
           return row[key].toLowerCase().includes(value.toLowerCase())
         })
       })
-    } */
+    }
 
     return data
   }
@@ -65,7 +65,10 @@ export class Database {
       this.#database[table][rowIndex].description = data.description || this.#database[table][rowIndex].description
       this.#database[table][rowIndex].updated_at = new Intl.DateTimeFormat("pt-BR").format(new Date())
       this.#persist()
+      return true
     }
+
+    return false
   }
 
   delete(table, id)
@@ -76,7 +79,10 @@ export class Database {
     {
       this.#database[table].splice(rowIndex, 1)
       this.#persist()
+      return true
     }
+
+    return false
   }
 
   complete(table, id)
@@ -88,6 +94,9 @@ export class Database {
       this.#database[table][rowIndex].completed_at = this.#database[table][rowIndex].completed_at !== null ?
        null : new Intl.DateTimeFormat("pt-BR").format(new Date())
       this.#persist()
+      return true
     }
+
+    return false      
   }
 }
