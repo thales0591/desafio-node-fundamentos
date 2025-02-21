@@ -31,7 +31,11 @@ export class Database {
     {
       data = data.filter((row) => {
         return Object.entries(search).some(([key, value]) => {
-          return row[key].toLowerCase().includes(value.toLowerCase())
+          if (value)
+          {
+            return row[key].toLowerCase().includes(value.toLowerCase())
+          }
+          return       
         })
       })
     }
