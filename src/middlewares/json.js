@@ -1,3 +1,5 @@
+import { parse } from 'csv-parse'
+
 export async function json (req, res) {
   const buffers = []
 
@@ -6,12 +8,26 @@ export async function json (req, res) {
     buffers.push(chunk)
   }
 
+  let rawData = Buffer.concat(buffers).toString()
+
   try 
   {
-    req.body = JSON.parse(Buffer.concat(buffers).toString())
+    req.body = JSON.parse(rawData)
   }
   catch
   {
-    req.body = null
+    try {
+      req.body = await new Promise((resolve, reject) => {
+        parse(rawData, { columns: true, trim: true }, (err, records) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(records);
+          }
+        });
+      });
+     } catch {
+      req.body = null;
+    } 
   }
 }
